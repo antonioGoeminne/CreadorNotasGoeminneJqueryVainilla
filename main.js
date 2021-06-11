@@ -1,18 +1,22 @@
+// variables
 let idTarea = 0;
 let indicadorDestacado = false;
 let arrayTarea = [];
 const tarjetasTareas = document.getElementById('main-cards-wrap');
 const dataInicial = JSON.parse(localStorage.getItem("lista de tareas"));
 const formAgregarTarea = document.getElementById('formularioAgregarTarea');
-// variables
+
+
+//objeto principal
 class Tarea {
-    constructor(id, estado, color, titular, contenido, destacado) {
+    constructor(id, estado, color, titular, contenido, destacado, borde) {
         this.id = id;
         this.estado = estado;
         this.color = color;
         this.titular = titular;
         this.contenido = contenido;
         this.destacado = destacado;
+        this.borde = borde;
     }
     eliminarTarea() {
         this.estado = false;
@@ -30,38 +34,19 @@ class Tarea {
     cambiarColor(a){
         this.color = a;
     }
-}
-//objetos
-const mostrarTareas = () => {
-    if (dataInicial) {
-        for (const tarea of dataInicial) {
-            const InstanciaTarea = new Tarea(tarea.id, tarea.estado, tarea.color, tarea.titular, tarea.contenido, tarea.destacado)
-            arrayTarea.push(InstanciaTarea)
-        }
-        renderTareas(arrayTarea)
+    cambiarBorde(a){
+        this.borde = a;
     }
 }
-const crearTarea = (titular, contenido) => {//modificamos la funcion para que reciba parametros, la vamos a invocar despues con los datos obtenidos del formulario
-    idTarea = arrayTarea.length ? arrayTarea[arrayTarea.length - 1].id + 1 : 1//arreglamos id, para que sea diferente siempre incluso cuando se recargue la página 
-    const tarea = new Tarea(idTarea, true, "blanco", titular, contenido, indicadorDestacado);//usamos los parametros aquí titular y contenido
-    arrayTarea.push(tarea);
-    guardarLocalStorage();
-    renderTareas(arrayTarea);
-}
-const filtrarDestacados = (a) => {
-    const destacados = a.filter(destacado => destacado.destacado);
-    for (const destacado of destacados) {
-        alert(`\n ID: ${destacado.id} \n titular: ${destacado.titular} \n contenido: ${destacado.contenido} \n color: ${destacado.color}`);
-    }
-}
+
+// funciones principales
 function renderTareas(tareas) {
     tarjetasTareas.innerHTML = ''
     for (const objeto of tareas) {
         let contenedor = document.createElement("div");
         contenedor.classList.add("tarea-wrap");
-        contenedor.style.backgroundColor=`${objeto.color}`;
-        contenedor.style.borderColor=`${objeto.color}`; 
-
+        contenedor.style.borderColor = `${objeto.borde}`;
+        contenedor.style.backgroundColor= `${objeto.color}`;
         contenedor.id = objeto.id;
         indicadorDestacado = false;
         contenedor.innerHTML = `
@@ -88,7 +73,7 @@ function renderTareas(tareas) {
                             //en color selection, en el evento click tomaba como target la etiqueta Img.
         tarjetasTareas.appendChild(contenedor);
     }
-    esucharEliminarTarea();
+    escucharEliminarTarea();
     escucharDestacarTarea();
     escucharQuitarDestacadoTarea();
     manejadorAlerta();  
@@ -96,11 +81,6 @@ function renderTareas(tareas) {
     escucharCambiarColores();
     manejadorBuscarTareas();
     
-}
-
-
-const guardarLocalStorage = () => {
-    localStorage.setItem("lista de tareas", JSON.stringify(arrayTarea));
 }
 
 formAgregarTarea.addEventListener('submit', manejadorAgregarTarea);
@@ -112,6 +92,32 @@ function manejadorAgregarTarea(e) {
     formAgregarTarea.children[0].value = ''
     formAgregarTarea.children[1].value = ''
 }
+
+const crearTarea = (titular, contenido) => {//modificamos la funcion para que reciba parametros, la vamos a invocar despues con los datos obtenidos del formulario
+    idTarea = arrayTarea.length ? arrayTarea[arrayTarea.length - 1].id + 1 : 1//arreglamos id, para que sea diferente siempre incluso cuando se recargue la página 
+    const tarea = new Tarea(idTarea, true, "blanco", titular, contenido, indicadorDestacado,'blanco');//usamos los parametros aquí titular y contenido
+    arrayTarea.push(tarea);
+    guardarLocalStorage();
+    renderTareas(arrayTarea);
+}
+
+const mostrarTareas = () => {
+    if (dataInicial) {
+        for (const tarea of dataInicial) {
+            const InstanciaTarea = new Tarea(tarea.id, tarea.estado, tarea.color, tarea.titular, tarea.contenido, tarea.destacado, tarea.borde)
+            arrayTarea.push(InstanciaTarea)
+        }
+        renderTareas(arrayTarea)
+    }
+}
+
+function escucharEliminarTarea() {
+    const botonesEliminarTarea = document.getElementsByClassName('cestoBasura');
+    for (const boton of botonesEliminarTarea) {
+        boton.addEventListener("click", eliminarCard);
+    }
+}
+
 const eliminarCard = (e) => {
     const cardSeleccionada = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
     cardSeleccionada.remove()
@@ -119,23 +125,43 @@ const eliminarCard = (e) => {
     arrayTarea = arrayTarea.filter(tarea => tarea.id != idTareaDOM)
     guardarLocalStorage();
 }
-function esucharEliminarTarea() {
-    const botonesEliminarTarea = document.getElementsByClassName('cestoBasura');
-    for (const boton of botonesEliminarTarea) {
-        boton.addEventListener("click", eliminarCard);
+
+const guardarLocalStorage = () => {
+    localStorage.setItem("lista de tareas", JSON.stringify(arrayTarea));
+}
+
+const escucharDestacarTarea = () => {
+    const botonesDestacarTarea = document.getElementsByClassName('estrella');
+    for (const boton of botonesDestacarTarea) {
+        boton.addEventListener("click", destacarTarea);
     }
 }
-const destacarTarea = (e) => {
-    const cardSeleccionada = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
-    $(cardSeleccionada).css('border', '1px solid red');
 
-    for (const objeto of arrayTarea) {
-        if (cardSeleccionada.id == objeto.id) {
-            objeto.destacar();
-        }
+
+const escucharQuitarDestacadoTarea = () => {
+    const botonesQuitarDestacadoTarea = document.getElementsByClassName('quitarEstrella');
+    for (const boton of botonesQuitarDestacadoTarea) {
+        boton.addEventListener("click", quitarDestacadoTarea);
+    }
+}
+
+
+const destacarTarea = (e) => {
+    const colorDestacado = 'var(--highlight-color)';
+
+    const tareaAEditar = arrayTarea.find(tarea => `estrella${tarea.id}` == e.target.id);
+    tareaAEditar.destacar();
+
+    if(`estrella${tareaAEditar.id}` == e.target.id);
+    {
+    tareaAEditar.cambiarBorde(colorDestacado);
     }
     guardarLocalStorage();
+    renderTareas(JSON.parse(localStorage.getItem("lista de tareas"))); // pinta las tareas de nuevo, sobreescribriendo lo que antes habia.
+
 }
+
+
 const quitarDestacadoTarea = (e) => {
     const cardSeleccionada = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
     for (const objeto of arrayTarea) {
@@ -145,18 +171,7 @@ const quitarDestacadoTarea = (e) => {
     }
     guardarLocalStorage();
 }
-const escucharDestacarTarea = () => {
-    const botonesDestacarTarea = document.getElementsByClassName('estrella');
-    for (const boton of botonesDestacarTarea) {
-        boton.addEventListener("click", destacarTarea);
-    }
-}
-const escucharQuitarDestacadoTarea = () => {
-    const botonesQuitarDestacadoTarea = document.getElementsByClassName('quitarEstrella');
-    for (const boton of botonesQuitarDestacadoTarea) {
-        boton.addEventListener("click", quitarDestacadoTarea);
-    }
-}
+
 const escucharEditarTareas = () => {
     $('.contentTasks').click(function CrearModal(e) {
     const tareaAEditar = arrayTarea.find(tarea => `edi${tarea.id}` == e.target.id)
@@ -169,6 +184,7 @@ const escucharEditarTareas = () => {
         $('.modal-wrap').submit(manejadorEditarTarea);
     });
 }
+
 const manejadorEditarTarea = (e) => {
     e.preventDefault();
     const titular = e.target.children[0].value
@@ -177,8 +193,14 @@ const manejadorEditarTarea = (e) => {
     tareaAEditar.editarContenido(titular, contenido)
     guardarLocalStorage()
     renderTareas(arrayTarea)
-  
+    $(e.target).remove();
 }
+
+const escucharCambiarColores = (e) => {
+    mostrarBotonesColores(e);
+    cambiarColorTarea(e);
+}
+
 const mostrarBotonesColores = (e) =>{
     $('.color-selection').click(function (e) {
         const numberId = e.target.id.slice(2);
@@ -186,20 +208,15 @@ const mostrarBotonesColores = (e) =>{
     });
 }
 
-const cambiarColorTarea = (e) =>{
+const cambiarColorTarea = () =>{
     $('.tarea-color').click(function (e) { 
 
         const colorFirst = 'var(--first-card-color)';
         const colorSecond = 'var(--second-card-color)';
         const colorThird = 'var(--third-card-color)';
-    
         const numberId = e.target.id.slice(6);
         const prefijoId = e.target.id.slice(0,6); // tipo de color del boton , ej: si es first, second, etc.
-        
-        
         const tareaSeleccionada = arrayTarea.find(tarea => tarea.id == numberId);
-     
-
         //1:Seleccionamos la tarea a modificar segun el id del boton clikear.
     
         if(prefijoId == 'colorF'){
@@ -207,23 +224,16 @@ const cambiarColorTarea = (e) =>{
             
         }else if(prefijoId == 'colorS'){
             tareaSeleccionada.cambiarColor(colorSecond);
-        
+
         }else if(prefijoId == 'colorT'){
             tareaSeleccionada.cambiarColor(colorThird);
-
         }
+        
         guardarLocalStorage();
         renderTareas(JSON.parse(localStorage.getItem("lista de tareas"))); // pinta las tareas de nuevo, sobreescribriendo lo que antes habia.
     });
 }
 
-const escucharCambiarColores = (e) => {
-   
-    
-    mostrarBotonesColores(e);
-    cambiarColorTarea(e);
-
-}
 
 const manejadorAlerta = () =>{
     $('.estrella').click(function () { 
