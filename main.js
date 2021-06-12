@@ -58,7 +58,6 @@ function renderTareas(tareas) {
                         <ul>
                             <li class="cestoBasura"><span><img src="https://image.flaticon.com/icons/png/512/105/105090.png"></span></li>
                             <li  class="estrella"><span><img id='estrella${objeto.id}' src="https://image.flaticon.com/icons/png/512/616/616821.png"></span></li>
-                            <li  class="quitarEstrella"><span><img src="https://image.flaticon.com/icons/png/512/130/130191.png"></span></li>
                             <li  class="color-selection"><span><img id="cs${objeto.id}" src="https://image.flaticon.com/icons/png/512/274/274355.png"></span></li> 
                             <div class="color-menu" id="cmenu${objeto.id}">
                                                              <img  src="lavado-en-seco.png" <input class="tarea-color" id="colorF${objeto.id}" type="button" value="red">
@@ -74,9 +73,7 @@ function renderTareas(tareas) {
         tarjetasTareas.appendChild(contenedor);
     }
     escucharEliminarTarea();
-    escucharDestacarTarea();
-    escucharQuitarDestacadoTarea();
-    manejadorAlerta();  
+    escucharDestacadoTareas();
     escucharEditarTareas();
     escucharCambiarColores();
     manejadorBuscarTareas();
@@ -130,46 +127,37 @@ const guardarLocalStorage = () => {
     localStorage.setItem("lista de tareas", JSON.stringify(arrayTarea));
 }
 
-const escucharDestacarTarea = () => {
+const escucharDestacadoTareas = () => {
     const botonesDestacarTarea = document.getElementsByClassName('estrella');
+    
     for (const boton of botonesDestacarTarea) {
-        boton.addEventListener("click", destacarTarea);
-    }
+        boton.addEventListener("click", manejadorDestacadoTareas);
+
+}
 }
 
-
-const escucharQuitarDestacadoTarea = () => {
-    const botonesQuitarDestacadoTarea = document.getElementsByClassName('quitarEstrella');
-    for (const boton of botonesQuitarDestacadoTarea) {
-        boton.addEventListener("click", quitarDestacadoTarea);
-    }
-}
-
-
-const destacarTarea = (e) => {
+const manejadorDestacadoTareas = (e) => {
     const colorDestacado = 'var(--highlight-color)';
 
     const tareaAEditar = arrayTarea.find(tarea => `estrella${tarea.id}` == e.target.id);
-    tareaAEditar.destacar();
 
-    if(`estrella${tareaAEditar.id}` == e.target.id);
-    {
+    if(tareaAEditar.destacado == false){
+    
+    tareaAEditar.destacar();
     tareaAEditar.cambiarBorde(colorDestacado);
-    }
+    console.log("destacado");
     guardarLocalStorage();
+    }  
+    else if(tareaAEditar.destacado == true){
+
+        console.log('sacar destacado');
+        tareaAEditar.quitarDestacado();
+        tareaAEditar.cambiarBorde('blanco');
+        guardarLocalStorage();
+
+    }
     renderTareas(JSON.parse(localStorage.getItem("lista de tareas"))); // pinta las tareas de nuevo, sobreescribriendo lo que antes habia.
 
-}
-
-
-const quitarDestacadoTarea = (e) => {
-    const cardSeleccionada = e.target.parentElement.parentElement.parentElement.parentElement.parentElement;
-    for (const objeto of arrayTarea) {
-        if (cardSeleccionada.id == objeto.id) {
-            objeto.quitarDestacado();
-        }
-    }
-    guardarLocalStorage();
 }
 
 const escucharEditarTareas = () => {
@@ -234,8 +222,11 @@ const cambiarColorTarea = () =>{
     });
 }
 
-
-const manejadorAlerta = () =>{
+/*
+const manejadorAlerta = (e) =>{
+   
+    const tareaAEditar = arrayTarea.find(tarea => `estrella${tarea.id}` == e.target.id);
+    if(tareaAEditar.destacado == false){
     $('.estrella').click(function () { 
    
         $('.alert').show(400)
@@ -244,6 +235,15 @@ const manejadorAlerta = () =>{
     });
 }
 
+if(tareaAEditar.destacado == true){
+    $('.estrella').click(function (e) { 
+    $('.alert-out').show(400)
+                    .delay(500)
+                    .fadeOut(200);        
+    });
+}
+}
+*/
 const manejadorBuscarTareas = () =>{
     $('#searcher').change(function (e) { 
         e.preventDefault();

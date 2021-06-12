@@ -281,3 +281,18 @@ filter: contrast(40%) sepia(1) hue-rotate(20deg) saturate(1000%);
 .alert p{
 	white-space: nowrap;
 }
+.alert-out{
+	display: none;
+	border: 1px solid var(--alert-color);
+	background-color: var(--alert-color);
+	border-radius: 4px;
+	color: rgba( 0, 0, 0, 1.1);
+	position: relative;
+	left: 50%;
+	height: 200px;
+	width: 200px;
+	text-transform: uppercase;
+}
+.alert-out{
+	white-space: nowrap;
+}
