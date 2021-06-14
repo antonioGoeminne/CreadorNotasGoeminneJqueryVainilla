@@ -1,3 +1,5 @@
+
+ 
 // variables
 let idTarea = 0;
 let indicadorDestacado = false;
@@ -105,6 +107,7 @@ const mostrarTareas = () => {
             arrayTarea.push(InstanciaTarea)
         }
         renderTareas(arrayTarea)
+
     }
 }
 
@@ -132,6 +135,7 @@ const escucharDestacadoTareas = () => {
     
     for (const boton of botonesDestacarTarea) {
         boton.addEventListener("click", manejadorDestacadoTareas);
+
 
 }
 }
@@ -163,14 +167,18 @@ const manejadorDestacadoTareas = (e) => {
 const escucharEditarTareas = () => {
     $('.contentTasks').click(function CrearModal(e) {
     const tareaAEditar = arrayTarea.find(tarea => `edi${tarea.id}` == e.target.id)
-        console.log(e.target.id);
-        $('body').append(`<form class="modal-wrap" id='form${e.target.id}'>
+    $('body').append(`<form class="modal-wrap" id='form${e.target.id}'>
         <input type="text"  placeholder = "titular..." value = "${tareaAEditar.titular}">
         <input type="text"  placeholder="contenido..." value = "${tareaAEditar.contenido}">
         <input type ="submit" value = "guardar cambios">
     </form>`);
-        $('.modal-wrap').submit(manejadorEditarTarea);
+
+        $('.modal-wrap').submit(manejadorEditarTarea)
+    
+
+
     });
+
 }
 
 const manejadorEditarTarea = (e) => {
@@ -187,6 +195,7 @@ const manejadorEditarTarea = (e) => {
 const escucharCambiarColores = (e) => {
     mostrarBotonesColores(e);
     cambiarColorTarea(e);
+    
 }
 
 const mostrarBotonesColores = (e) =>{
@@ -222,28 +231,9 @@ const cambiarColorTarea = () =>{
     });
 }
 
-/*
-const manejadorAlerta = (e) =>{
-   
-    const tareaAEditar = arrayTarea.find(tarea => `estrella${tarea.id}` == e.target.id);
-    if(tareaAEditar.destacado == false){
-    $('.estrella').click(function () { 
-   
-        $('.alert').show(400)
-                    .delay(500)
-                    .fadeOut(200);
-    });
-}
 
-if(tareaAEditar.destacado == true){
-    $('.estrella').click(function (e) { 
-    $('.alert-out').show(400)
-                    .delay(500)
-                    .fadeOut(200);        
-    });
-}
-}
-*/
+
+
 const manejadorBuscarTareas = () =>{
     $('#searcher').change(function (e) { 
         e.preventDefault();
@@ -258,6 +248,38 @@ const filtrarPorBusqueda = (e) =>{
      console.log(arrayTarea.titular); 
 }
 
+const apiClima = () =>{
+    const apiKey = '0b0c817b578b447b97a0c1bbe0ab3575';
+  $.getJSON(`https://api.weatherbit.io/v2.0/current?city=BuenosAires&key=${apiKey}&include=minutely`, function (respuesta, estado) {
+            const data = respuesta.data;
+            for (const objeto of data) {
+                $('.date').prepend(`${objeto.app_temp}° temperatura actual`);
+                $('.city').prepend(`${objeto.city_name}`);
+            }
+      }
+  );
+}
+const mostrarTareaEjemplo = () =>{
+
+   $.getJSON("data.json", function (respuesta) {
+           for (const objeto of respuesta) {
+               crearTarea(objeto.titular, objeto.contenido);
+               guardarLocalStorage();
+               renderTareas(arrayTarea);
+           }
+       }
+   );
+}
+
+const manejadorInstanciaEjemploTarea = () =>{
+    if(!dataInicial){
+        mostrarTareaEjemplo();
+    }
+    //La primera vez que el usuario acceda a la web, se vera el ejemplo. Luego nunca más a menos que borre la caché.
+}
+
+manejadorInstanciaEjemploTarea();
+apiClima();
 mostrarTareas();
 
-//hacer un boton que simule el post , diciendole al usuario que guarde los cambios en una base de datos.
+$('.date').fadeOut(5000);
