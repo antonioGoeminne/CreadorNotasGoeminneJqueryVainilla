@@ -79,6 +79,8 @@ function renderTareas(tareas) {
     escucharEditarTareas();
     escucharCambiarColores();
     manejadorBuscarTareas();
+    manejadorFiltrarDestacadas();
+    mostrarTodasTareas();
     
 }
 
@@ -277,6 +279,26 @@ const manejadorInstanciaEjemploTarea = () =>{
     }
     //La primera vez que el usuario acceda a la web, se vera el ejemplo. Luego nunca más a menos que borre la caché.
 }
+
+const filtarDestacados = () => {
+    const tareasDestacadas = arrayTarea.filter(tarea => tarea.destacado == true);
+    renderTareas(tareasDestacadas);
+}
+
+manejadorFiltrarDestacadas = () =>{
+$('#tareasDestacadas').click(function (e) { 
+    
+    filtarDestacados();
+});
+}
+
+const mostrarTodasTareas = () =>{
+        $('#dashBoard').click(function (e) { 
+            e.preventDefault;
+            renderTareas(arrayTarea);
+        });
+}
+
 
 manejadorInstanciaEjemploTarea();
 apiClima();
