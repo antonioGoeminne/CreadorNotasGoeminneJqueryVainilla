@@ -78,9 +78,7 @@ function renderTareas(tareas) {
     escucharDestacadoTareas();
     escucharEditarTareas();
     escucharCambiarColores();
-    manejadorBuscarTareas();
-    manejadorFiltrarDestacadas();
-    mostrarTodasTareas();
+    
     
 }
 
@@ -151,12 +149,10 @@ const manejadorDestacadoTareas = (e) => {
     
     tareaAEditar.destacar();
     tareaAEditar.cambiarBorde(colorDestacado);
-    console.log("destacado");
     guardarLocalStorage();
     }  
     else if(tareaAEditar.destacado == true){
 
-        console.log('sacar destacado');
         tareaAEditar.quitarDestacado();
         tareaAEditar.cambiarBorde('blanco');
         guardarLocalStorage();
@@ -233,23 +229,6 @@ const cambiarColorTarea = () =>{
     });
 }
 
-
-
-
-const manejadorBuscarTareas = () =>{
-    $('#searcher').change(function (e) { 
-        e.preventDefault();
-        filtrarPorBusqueda(e);
-    });
-}
-
-const filtrarPorBusqueda = (e) =>{
-
-    const tareasBuscadas = e.target.value.toLowerCase();
-     arrayTarea = arrayTarea.filter = (tarea => tarea.titular == tareasBuscadas);
-     console.log(arrayTarea.titular); 
-}
-
 const apiClima = () =>{
     const apiKey = '0b0c817b578b447b97a0c1bbe0ab3575';
   $.getJSON(`https://api.weatherbit.io/v2.0/current?city=BuenosAires&key=${apiKey}&include=minutely`, function (respuesta, estado) {
@@ -300,8 +279,29 @@ const mostrarTodasTareas = () =>{
 }
 
 
+
+const filtrarBusqueda = () =>{
+
+    $('#searcher').change(function (e) { 
+        e.preventDefault();
+        const textoUsuario = e.target.value;
+        for (const busqueda of arrayTarea) {
+            const nombre = busqueda.titular;
+    
+        if (nombre.indexOf(textoUsuario) !== -1) {
+                const tareasEncontradas = arrayTarea.filter(tarea => tarea.titular == nombre);
+                renderTareas(tareasEncontradas);
+        }
+    }
+    });
+    
+}
+
 manejadorInstanciaEjemploTarea();
 apiClima();
 mostrarTareas();
+filtrarBusqueda();
+manejadorFiltrarDestacadas();
+mostrarTodasTareas();
 
 $('.date').fadeOut(5000);
