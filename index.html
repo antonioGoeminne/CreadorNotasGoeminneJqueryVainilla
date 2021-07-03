@@ -2,58 +2,57 @@
 <html>
 
 <head>
-	<title>landing page practica</title>
+	<title>Creador de notas</title>
 	<link rel="stylesheet" href="style.css">
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+	<link rel='icon' href="https://image.flaticon.com/icons/png/512/889/889648.png">
 </head>
 
 <body>
 	<sidebar>
 		<div class="logo-wrapper">
-			<img width="40px" height="40px" src="https://image.flaticon.com/icons/png/512/129/129473.png">
-			<span>
-				<h1>logo</h1>
-			</span>
+			<img width="40px" height="40px" src="https://image.flaticon.com/icons/png/512/889/889648.png">
 		</div>
 		<ul class="sidebar-list">
-			<a href="#">
+			
 				<li id="dashBoard">
-					<img width="20px" height="20px" src="https://image.flaticon.com/icons/png/512/52/52013.png">
+					<img width="20px" height="20px" src="https://image.flaticon.com/icons/png/512/622/622223.png">
 					<span>
 						<h3>dashboard</h3>
 					</span>
 				</li>
-			</a>
-			<a href="#">
+			
+			
 				<li>
-					<img width="20px" height="20px" src="https://image.flaticon.com/icons/png/512/124/124669.png">
+					<img width="20px" height="20px" src="https://image.flaticon.com/icons/png/512/633/633593.png">
 					<span>
 						<h3>calendario</h3>
 					</span>
 				</li>
-			</a>
-			<a href="#">
+			
+			
 				<li id='tareasDestacadas'>
 					<img width="20px" height="20px" src="https://image.flaticon.com/icons/png/512/130/130190.png">
 					<span>
 						<h3>destacados</h3>
 					</span>
 				</li>
-			</a>
+			
 		</ul>
 
-	</sidebar>
-	<header>
-		<div  class="date"></div>
-		<div  class="city"></div>
+	</sidebar>	
 
-		<div class="search-wrapper"><input id="searcher"  type="search" placeholder="busque aqui">
-		
+	<header>
+		<div class="date"></div>
+		<div class="city"></div>
+
+		<div class="search-wrapper"><input id="searcher" type="search" placeholder="busque aqui">
+
 		</div>
 		<div class="user-wrapper">
-			<img>
 			<span>
+			<img src='https://image.flaticon.com/icons/png/512/848/848043.png' width="40px" height="40px">
 				<h4>user admin</h4>
 			</span>
 		</div>
@@ -67,17 +66,10 @@
 			<input type="text" placeholder="Contenido...">
 			<input type="submit" value="Anadir Tarea">
 		</form>
-
-		<div class="alert"><p>Tarea destacada</p></div>
-		<div class="alert-out"><p>Destacado quitado</p></div>
-
-
-		
 	</div>
-	<div id="main-cards-wrap" class="main-content">
 
+	<div id="main-cards-wrap" class="main-content"></div>
 	
-	</div>
 	<script src="jquery-3.6.0.min.js"></script>
 	<script src="main.js"></script>
 
